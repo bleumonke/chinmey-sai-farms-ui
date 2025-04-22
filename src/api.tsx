@@ -2,7 +2,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_BASE_URL,
+  baseURL: "http://ecs-chinmey-sai-farms-api-1958333646.us-east-1.elb.amazonaws.com",
   headers: {
     "Content-Type": "application/json",
   },
