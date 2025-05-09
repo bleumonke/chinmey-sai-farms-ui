@@ -24,7 +24,7 @@ const PlotsTableSection: React.FC<PlotTableProps> = ({layoutId}) => {
 
   if (isError) {
     return <Alert severity="error">Error fetching plots: {error?.message || 'Unknown error'}</Alert>;
-  }
+      }
 
   return (
     <DataTable

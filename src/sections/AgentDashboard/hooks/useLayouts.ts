@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { getLayouts as fetchLayouts } from '../../../lib/api'; // Adjust path if needed
-import type { Layout } from '../../../types'; // Adjust path if needed
+import { getLayouts as fetchLayouts } from '../../../lib/api';  
+import type { Layout } from '../../../types';  
 
 export function useLayouts() {
   const { 

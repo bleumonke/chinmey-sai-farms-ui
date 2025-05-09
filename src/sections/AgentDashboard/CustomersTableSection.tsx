@@ -23,7 +23,7 @@ const CustomersTableSection: React.FC = () => {
 
   if (isError) {
     return <Alert severity="error">Error fetching customers: {error?.message || 'Unknown error'}</Alert>;
-  }
+      }
 
   return (
     <DataTable

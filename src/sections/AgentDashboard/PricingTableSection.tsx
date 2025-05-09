@@ -22,7 +22,7 @@ const PricingTableSection: React.FC<PricingTableProps> = ({cropId}) => {
 
   if (isError) {
     return <Alert severity="error">Error fetching pricing: {error?.message || 'Unknown error'}</Alert>;
-  }
+      }
 
   return (
     <DataTable

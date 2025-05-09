@@ -16,7 +16,7 @@ const CropTableSection: React.FC = () => {
 
   if (isError) {
     return <Alert severity="error">Error fetching crops: {error?.message || 'Unknown error'}</Alert>;
-  }
+      }
 
   return (
     <DataTable

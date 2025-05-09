@@ -1,12 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
-import { getCustomers as fetchCustomers } from '../../../lib/api'; // Adjust path as needed
-import type { Customer } from '../../../types'; // Adjust path as needed
-
-// Function to fetch data (can be inline or imported)
-// const fetchCustomers = async (): Promise<Customer[]> => {
-//   const response = await getCustomers();
-//   return response.data;
-// };
+import { getCustomers as fetchCustomers } from '../../../lib/api';  
+import type { Customer } from '../../../types';  
+ 
 
 export function useCustomers() {
   const { 
