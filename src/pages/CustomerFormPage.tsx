@@ -19,7 +19,8 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getCustomers, createCustomer, updateCustomer, deleteCustomer } from '../../api';
+import { getCustomers, createCustomer, updateCustomer, deleteCustomer } from '../lib/api';
+import type { Customer } from '../types';
 
 const CustomerFormPage: React.FC = () => {
   const navigate = useNavigate();

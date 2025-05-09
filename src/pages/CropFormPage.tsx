@@ -18,8 +18,9 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getCrops, createCrop, updateCrop, deleteCrop } from '../../api';
-import PricingTable from '../tables/PricingTable';
+import { getCrops, createCrop, updateCrop, deleteCrop } from '../lib/api';
+import PricingTableSection from '../sections/AgentDashboard/PricingTableSection';
+import type { Crop } from '../types';
 
 const CropFormPage: React.FC = () => {
   const navigate = useNavigate();
@@ -105,7 +106,7 @@ const CropFormPage: React.FC = () => {
           <Stack spacing={2}>
             <TextField name="CropId" label="CropID" value={cropId} disabled={true} fullWidth />
             <TextField label="Crop Name" name="name" value={formData.name} onChange={handleChange} fullWidth />
-              {cropId && (<PricingTable cropId={cropId} />)}
+              {cropId && (<PricingTableSection cropId={cropId} />)}
           </Stack>
         </Box>
 
