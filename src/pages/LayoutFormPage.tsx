@@ -20,35 +20,23 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate, useParams } from 'react-router-dom';
-import { createLayout, updateLayout, getLayouts, deleteLayout } from '../../api';
-import PlotsTable from '../tables/PlotsTable';
-
-interface LayoutPayload {
-  name: string;
-  address: string;
-  city: string;
-  state: string;
-  zip_code: string;
-  country: string;
-  area_in_acres: number;
-  description?: string;
-  center_coordinates: { lat: number; long: number };
-  perimeter_coordinates: { [key: string]: { lat: number; lng: number } };
-}
+import { createLayout, updateLayout, getLayouts, deleteLayout } from '../lib/api';
+import PlotsTableSection from '../sections/AgentDashboard/PlotsTableSection';
+import type { Layout, LayoutPayload } from '../types';
 
 const LayoutFormPage: React.FC = () => {
   const navigate = useNavigate();
   const { layoutId } = useParams();
   const isEdit = !!layoutId;
 
-  const [formData, setFormData] = useState<any>({
+  const [formData, setFormData] = useState<Partial<Layout> & { center_lat?: string, center_lng?: string }>({
     name: '',
     address: '',
     city: '',
     state: '',
     zip_code: '',
     country: '',
-    area_in_acres: '',
+    area_in_acres: 0,
     description: '',
     center_lat: '',
     center_lng: '',
@@ -62,9 +50,9 @@ const LayoutFormPage: React.FC = () => {
   const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: 'success' | 'error' }>({ open: false, message: '', severity: 'success' });
 
   useEffect(() => {
-    if (isEdit) {
+    if (isEdit && layoutId) {
       getLayouts().then((res) => {
-        const layout = res.data.find((l: any) => l.id === layoutId);
+        const layout = res.data.find((l: Layout) => l.id === layoutId);
         if (layout) {
           setFormData({
             name: layout.name,
@@ -73,16 +61,16 @@ const LayoutFormPage: React.FC = () => {
             state: layout.state,
             zip_code: layout.zip_code,
             country: layout.country,
-            area_in_acres: layout.area_in_acres,
+            area_in_acres: layout.area_in_acres ?? 0,
             description: layout.description || '',
-            center_lat: layout.center_coordinates?.lat,
-            center_lng: layout.center_coordinates?.long,
+            center_lat: layout.center_coordinates?.lat != null ? String(layout.center_coordinates.lat) : '',
+            center_lng: layout.center_coordinates?.long != null ? String(layout.center_coordinates.long) : '',
           });
           setPerimeterCoords(layout.perimeter_coordinates || {});
         }
       });
     }
-  }, [layoutId]);
+  }, [isEdit, layoutId]);
 
   const handleChange = (name: string, value: any) => {
     setFormData((prev: any) => ({ ...prev, [name]: value }));
@@ -106,17 +94,17 @@ const LayoutFormPage: React.FC = () => {
   const handleSubmit = async () => {
     setIsSubmitting(true);
     const payload: LayoutPayload = {
-      name: formData.name,
-      address: formData.address,
-      city: formData.city,
-      state: formData.state,
-      zip_code: formData.zip_code,
-      country: formData.country,
-      area_in_acres: parseFloat(formData.area_in_acres),
+      name: formData.name!,
+      address: formData.address!,
+      city: formData.city!,
+      state: formData.state!,
+      zip_code: formData.zip_code!,
+      country: formData.country!,
+      area_in_acres: Number(formData.area_in_acres || '0'),
       description: formData.description,
       center_coordinates: {
-        lat: parseFloat(formData.center_lat),
-        long: parseFloat(formData.center_lng),
+        lat: parseFloat(formData.center_lat || '0'),
+        long: parseFloat(formData.center_lng || '0'),
       },
       perimeter_coordinates: perimeterCoords,
     };
@@ -174,7 +162,11 @@ const LayoutFormPage: React.FC = () => {
           </Box>
 
           <Stack spacing={2}>
-            <TextField name="LayoutId" label="LayoutID" value={layoutId} disabled={true} fullWidth />
+            {
+              isEdit && (
+                <TextField name="LayoutId" label="LayoutID" value={layoutId} disabled={true} fullWidth />
+              )
+            }
             <TextField label="Name" value={formData.name} onChange={(e) => handleChange('name', e.target.value)} fullWidth />
             <TextField label="Address" value={formData.address} onChange={(e) => handleChange('address', e.target.value)} fullWidth />
             <TextField label="City" value={formData.city} onChange={(e) => handleChange('city', e.target.value)} fullWidth />
@@ -226,7 +218,7 @@ const LayoutFormPage: React.FC = () => {
               </Grid>
             ))}
             <Divider sx={{ my: 2 }} />
-            {layoutId && (<PlotsTable layoutId={layoutId} />)}
+            {layoutId && (<PlotsTableSection layoutId={layoutId} />)}
           </Stack>
         </Box>
 

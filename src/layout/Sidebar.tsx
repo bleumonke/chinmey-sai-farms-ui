@@ -25,7 +25,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 const drawerWidth = 220;
 
 const Sidebar: React.FC = () => {
-  const theme = useTheme();
+ 
   const navigate = useNavigate();
   const location = useLocation();
 

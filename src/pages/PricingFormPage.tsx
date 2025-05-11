@@ -20,7 +20,8 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getPricing, createPricing, updatePricing, deletePricing } from '../../api';
+import { getPricing, createPricing, updatePricing, deletePricing } from '../lib/api';
+import type { Pricing } from '../types';
 
 const extentUnits = ['acre', 'cent', 'sqft'];
 const paymentModes = ['OUT-RIGHT', 'EMI'];
@@ -30,7 +31,7 @@ const PricingFormPage: React.FC = () => {
   const { pricingId, cropId } = useParams();
   const isEdit = !!pricingId;
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<Partial<Pricing>>({
     name: '',
     payment_mode: '',
     extent_unit: '',
@@ -53,27 +54,44 @@ const PricingFormPage: React.FC = () => {
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' as 'success' | 'error' });
 
   useEffect(() => {
-    if (isEdit) {
+    if (isEdit && pricingId) {
       getPricing().then(res => {
-        const pricing = res.data.find((p: any) => p.id === pricingId);
+        const pricing = res.data.find((p: Pricing) => p.id === pricingId);
         if (pricing) {
-          setFormData({ ...pricing });
+          setFormData({ 
+            ...pricing,
+            valid_from: pricing.valid_from?.split('T')[0] || '', 
+            valid_to: pricing.valid_to?.split('T')[0] || '',
+          });
         }
       });
     }
   }, [pricingId, isEdit]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
+    const payload = {
+      ...formData,
+      crop_id: isEdit ? undefined : cropId,
+      extent_min_value: Number(formData.extent_min_value || 0),
+      extent_max_value: Number(formData.extent_max_value || 0),
+      cost_per_acre: Number(formData.cost_per_acre || 0),
+      cost_per_cent: Number(formData.cost_per_cent || 0),
+      cost_per_sqft: Number(formData.cost_per_sqft || 0),
+      total_cost_per_acre: Number(formData.total_cost_per_acre || 0),
+      emi_per_month: Number(formData.emi_per_month || 0),
+    };
+    delete payload.id;
+
     try {
       if (isEdit) {
-        await updatePricing(pricingId!, formData);
+        await updatePricing(pricingId!, payload);
       } else {
-        await createPricing(formData);
+        await createPricing(payload);
       }
       setSnackbar({ open: true, message: 'Pricing saved successfully', severity: 'success' });
       setTimeout(() => navigate(-1), 800);
@@ -120,8 +138,14 @@ const PricingFormPage: React.FC = () => {
           </Box>
 
           <Stack spacing={2}>
-            <TextField name="CropId" label="CropID" value={cropId} disabled={true} fullWidth />
-            <TextField name="PricingID" label="PricingID" value={pricingId} disabled={true} fullWidth />
+            {
+              isEdit && (
+                <>
+                  <TextField name="CropId" label="CropID" value={cropId} disabled={true} fullWidth />
+                  <TextField name="PricingID" label="PricingID" value={pricingId} disabled={true} fullWidth />
+                </>
+              )
+            }
             <TextField label="Name" name="name" value={formData.name} onChange={handleChange} fullWidth />
             <TextField select label="Payment Mode" name="payment_mode" value={formData.payment_mode} onChange={handleChange} fullWidth>
               {paymentModes.map(mode => <MenuItem key={mode} value={mode}>{mode}</MenuItem>)}

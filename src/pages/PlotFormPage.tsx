@@ -22,30 +22,18 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getPlotById, createPlot, updatePlot, deletePlot } from '../../api';
-
-interface PlotPayload {
-  layout_id: string;
-  customer_id?: string | null;
-  number: string;
-  name: string;
-  area_in_acres: number;
-  is_active: boolean;
-  is_sold: boolean;
-  description?: string | null;
-  center_coordinates?: { lat: number; long: number } | null;
-  perimeter_coordinates?: { [key: string]: { lat: number; lng: number } } | null;
-}
+import { getPlotById, createPlot, updatePlot, deletePlot } from '../lib/api';
+import type { Plot, PlotPayload } from '../types';
 
 const PlotFormPage: React.FC = () => {
   const navigate = useNavigate();
   const { layoutId, plotId } = useParams();
   const isEdit = !!plotId;
 
-  const [formData, setFormData] = useState<any>({
+  const [formData, setFormData] = useState<Partial<Plot> & { center_lat?: string, center_lng?: string }>({
     number: '',
     name: '',
-    area_in_acres: '',
+    area_in_acres: 0,
     is_active: true,
     is_sold: false,
     description: '',
@@ -66,17 +54,17 @@ const PlotFormPage: React.FC = () => {
   useEffect(() => {
     if (isEdit && plotId) {
       getPlotById(plotId).then((res) => {
-        const plot = res.data;
+        const plot: Plot = res.data;
         setFormData({
           number: plot.number,
           name: plot.name,
-          area_in_acres: plot.area_in_acres,
-          is_active: plot.is_active,
-          is_sold: plot.is_sold,
+          area_in_acres: plot.area_in_acres ?? 0,
+          is_active: plot.is_active ?? true,
+          is_sold: plot.is_sold ?? false,
           description: plot.description || '',
           customer_id: plot.customer_id || '',
-          center_lat: plot.center_coordinates?.lat || '',
-          center_lng: plot.center_coordinates?.long || ''
+          center_lat: plot.center_coordinates?.lat != null ? String(plot.center_coordinates.lat) : '',
+          center_lng: plot.center_coordinates?.long != null ? String(plot.center_coordinates.long) : ''
         });
         setPerimeterCoords(plot.perimeter_coordinates || {});
       });
@@ -111,17 +99,17 @@ const PlotFormPage: React.FC = () => {
     const payload: PlotPayload = {
       layout_id: layoutId!,
       customer_id: formData.customer_id || null,
-      number: formData.number,
-      name: formData.name,
-      area_in_acres: parseFloat(formData.area_in_acres),
-      is_active: formData.is_active,
-      is_sold: formData.is_sold,
+      number: formData.number!,
+      name: formData.name!,
+      area_in_acres: Number(formData.area_in_acres || 0),
+      is_active: formData.is_active ?? true,
+      is_sold: formData.is_sold ?? false,
       description: formData.description || null,
-      center_coordinates: {
-        lat: parseFloat(formData.center_lat),
-        long: parseFloat(formData.center_lng)
-      },
-      perimeter_coordinates: perimeterCoords
+      center_coordinates: formData.center_lat && formData.center_lng ? {
+        lat: parseFloat(formData.center_lat || '0'),
+        long: parseFloat(formData.center_lng || '0')
+      } : null,
+      perimeter_coordinates: Object.keys(perimeterCoords).length > 0 ? perimeterCoords : null
     };
 
     try {
@@ -195,8 +183,14 @@ const PlotFormPage: React.FC = () => {
             </Stack>
           </Box>
           <Stack spacing={2}>
-            <TextField name="LayoutId" label="LayoutID" value={layoutId} disabled={true} fullWidth />
-            <TextField name="PlotId" label="PlotID" value={plotId} disabled={true} fullWidth />
+            {
+              isEdit && (
+                <>
+                  <TextField name="LayoutId" label="LayoutID" value={layoutId} disabled={true} fullWidth />
+                  <TextField name="PlotId" label="PlotID" value={plotId} disabled={true} fullWidth />
+                </>
+              )
+            }
             <TextField label="Number" value={formData.number} onChange={(e) => handleChange('number', e.target.value)} fullWidth />
             <TextField label="Name" value={formData.name} onChange={(e) => handleChange('name', e.target.value)} fullWidth />
             <TextField label="Area (in acres)" value={formData.area_in_acres} onChange={(e) => handleChange('area_in_acres', e.target.value)} fullWidth />
