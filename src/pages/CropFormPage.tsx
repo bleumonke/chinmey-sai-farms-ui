@@ -104,7 +104,11 @@ const CropFormPage: React.FC = () => {
           </Box>
 
           <Stack spacing={2}>
-            <TextField name="CropId" label="CropID" value={cropId} disabled={true} fullWidth />
+            {
+              isEdit && (
+                <TextField name="CropId" label="CropID" value={cropId} disabled={true} fullWidth />
+              )
+            }
             <TextField label="Crop Name" name="name" value={formData.name} onChange={handleChange} fullWidth />
               {cropId && (<PricingTableSection cropId={cropId} />)}
           </Stack>

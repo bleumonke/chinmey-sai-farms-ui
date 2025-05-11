@@ -183,8 +183,14 @@ const PlotFormPage: React.FC = () => {
             </Stack>
           </Box>
           <Stack spacing={2}>
-            <TextField name="LayoutId" label="LayoutID" value={layoutId} disabled={true} fullWidth />
-            <TextField name="PlotId" label="PlotID" value={plotId} disabled={true} fullWidth />
+            {
+              isEdit && (
+                <>
+                  <TextField name="LayoutId" label="LayoutID" value={layoutId} disabled={true} fullWidth />
+                  <TextField name="PlotId" label="PlotID" value={plotId} disabled={true} fullWidth />
+                </>
+              )
+            }
             <TextField label="Number" value={formData.number} onChange={(e) => handleChange('number', e.target.value)} fullWidth />
             <TextField label="Name" value={formData.name} onChange={(e) => handleChange('name', e.target.value)} fullWidth />
             <TextField label="Area (in acres)" value={formData.area_in_acres} onChange={(e) => handleChange('area_in_acres', e.target.value)} fullWidth />

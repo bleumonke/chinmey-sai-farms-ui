@@ -124,7 +124,11 @@ const CustomerFormPage: React.FC = () => {
           </Box>
 
           <Stack spacing={2}>
-            <TextField name="customerId" label="CustomerID" value={customerId} disabled={true} fullWidth />
+            {
+              isEdit && (
+                <TextField name="customerId" label="CustomerID" value={customerId} disabled={true} fullWidth />
+              )
+            }
             <Grid container spacing={2}>
               <Grid><TextField name="first_name" label="First Name" value={formData.first_name} onChange={handleChange} fullWidth /></Grid>
               <Grid><TextField name="middle_name" label="Middle Name" value={formData.middle_name} onChange={handleChange} fullWidth /></Grid>

@@ -162,7 +162,11 @@ const LayoutFormPage: React.FC = () => {
           </Box>
 
           <Stack spacing={2}>
-            <TextField name="LayoutId" label="LayoutID" value={layoutId} disabled={true} fullWidth />
+            {
+              isEdit && (
+                <TextField name="LayoutId" label="LayoutID" value={layoutId} disabled={true} fullWidth />
+              )
+            }
             <TextField label="Name" value={formData.name} onChange={(e) => handleChange('name', e.target.value)} fullWidth />
             <TextField label="Address" value={formData.address} onChange={(e) => handleChange('address', e.target.value)} fullWidth />
             <TextField label="City" value={formData.city} onChange={(e) => handleChange('city', e.target.value)} fullWidth />

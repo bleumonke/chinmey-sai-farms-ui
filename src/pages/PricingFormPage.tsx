@@ -138,8 +138,14 @@ const PricingFormPage: React.FC = () => {
           </Box>
 
           <Stack spacing={2}>
-            <TextField name="CropId" label="CropID" value={cropId} disabled={true} fullWidth />
-            <TextField name="PricingID" label="PricingID" value={pricingId} disabled={true} fullWidth />
+            {
+              isEdit && (
+                <>
+                  <TextField name="CropId" label="CropID" value={cropId} disabled={true} fullWidth />
+                  <TextField name="PricingID" label="PricingID" value={pricingId} disabled={true} fullWidth />
+                </>
+              )
+            }
             <TextField label="Name" name="name" value={formData.name} onChange={handleChange} fullWidth />
             <TextField select label="Payment Mode" name="payment_mode" value={formData.payment_mode} onChange={handleChange} fullWidth>
               {paymentModes.map(mode => <MenuItem key={mode} value={mode}>{mode}</MenuItem>)}
