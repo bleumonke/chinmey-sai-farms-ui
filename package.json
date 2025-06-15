@@ -2,9 +2,6 @@
   "name": "chinmey-sai-farms-ui",
   "version": "0.1.0",
   "private": true,
-  "engines": {
-    "node": ">=20"
-  },
   "description": "Chinmey Sai Farms UI",
   "dependencies": {
     "@aws-amplify/auth": "^6.13.0",
