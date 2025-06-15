@@ -21,5 +21,5 @@
     "jsx": "react-jsx"
   },
   "include": ["src"],
-  "exclude": ["node_modules", "build"]     // 🧹 Prevents unwanted TS analysis on compiled output
+  "exclude": ["node_modules", "build", "scripts", "public"]
 }

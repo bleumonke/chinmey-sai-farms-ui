@@ -1,7 +1,3 @@
-// src/types/index.ts
-
-// Base entity types (consider adding more specific fields as needed based on API)
-
 export interface Customer {
   id: string;
   first_name: string;
