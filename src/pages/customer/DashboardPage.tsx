@@ -4,7 +4,7 @@ import {
   Typography,
 } from "@mui/material";
 
-const CustomerDashboardPage: React.FC = () => {
+const DashboardPage: React.FC = () => {
   return (
     <Box sx={{ color: "black", marginTop: 5 }}>
       <Typography variant="h6">Welcome to the Customer Dashboard!</Typography>
@@ -15,4 +15,4 @@ const CustomerDashboardPage: React.FC = () => {
   );
 }
 
-export default CustomerDashboardPage; 
+export default DashboardPage; 

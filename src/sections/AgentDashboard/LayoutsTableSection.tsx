@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from "react-router-dom";
 import { Alert } from '@mui/material';
-import DataTable, { ColumnDef } from "../../components/DataTableV2/DataTableV2";
+import DataTable, { ColumnDef } from "../../components/DataTable";
 import type { Layout } from '../../types';
 import { useLayouts } from './hooks/useLayouts';
 
@@ -10,20 +10,18 @@ const LayoutsTableSection: React.FC = () => {
   const { layouts, isLoading, isError, error } = useLayouts();
 
   const columns: ColumnDef<Layout>[] = [
-    { label: "ID", accessor: "id" },
     { label: "Name", accessor: "name" },
-    {
-      label: "Address",
-      accessor: "address",
+    { label: "Area (acers)", accessor: "area_in_acres" },
+    { label: "Address", accessor: "address",
       render: (row) =>
-        `${row.address}\n${row.city}\n${row.state}, ${row.country}-${row.zip_code}`,
+        [row.address, row.city, row.state, row.country, row.zip_code].filter(Boolean).join(", ")
     },
-    { label: "Area(acers)", accessor: "area_in_acres"}
+    { label: "Number of plots", accessor: "number_of_plots" },
   ];
 
   if (isError) {
     return <Alert severity="error">Error fetching layouts: {error?.message || 'Unknown error'}</Alert>;
-      }
+  }
 
   return (
     <DataTable
@@ -31,7 +29,6 @@ const LayoutsTableSection: React.FC = () => {
       columns={columns}
       data={layouts}
       loading={isLoading}
-      onAddClick={() => navigate("/agent/layouts/new")}
       onViewDetails={(id) => navigate(`/agent/layouts/${id}/edit`)}
     />
   );

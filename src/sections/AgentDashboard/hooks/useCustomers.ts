@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getCustomers as fetchCustomers } from '../../../lib/api';  
+import { getCustomers as fetchCustomers } from '../../../api';  
 import type { Customer } from '../../../types';  
  
 

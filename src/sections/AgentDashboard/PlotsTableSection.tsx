@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from "react-router-dom";
 import { Alert } from '@mui/material';
-import DataTable, { ColumnDef } from "../../components/DataTableV2/DataTableV2";
+import DataTable, { ColumnDef } from "../../components/DataTable";
 import type { Plot } from '../../types';
 import { useLayoutPlots } from './hooks/useLayoutPlots';
 
@@ -14,12 +14,11 @@ const PlotsTableSection: React.FC<PlotTableProps> = ({layoutId}) => {
   const { plots, isLoading, isError, error } = useLayoutPlots(layoutId);
 
   const columns: ColumnDef<Plot>[] = [
-    { label: "ID", accessor: "id" },
+    { label: "LP Number", accessor: "number" },
     { label: "Name", accessor: "name" },
-    { label: "Number", accessor: "number" },
-    { label: "Active", accessor: "is_active" },
-    { label: "Sold", accessor: "is_sold" },
-
+    { label: "Area (acres)", accessor: "area_in_acres" },
+    { label: "Crop ID", accessor: "crop_id" },
+    { label: "Customer ID", accessor: "customer_id" }
   ];
 
   if (isError) {
@@ -32,7 +31,6 @@ const PlotsTableSection: React.FC<PlotTableProps> = ({layoutId}) => {
       columns={columns}
       data={plots}
       loading={isLoading}
-      onAddClick={() => navigate(`/agent/layouts/${layoutId}/plots/new`)}
       onViewDetails={(id) => navigate(`/agent/layouts/${layoutId}/plots/${id}/edit`)}
     />
   );

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Drawer,
   List,
@@ -7,128 +7,172 @@ import {
   ListItemIcon,
   ListItemText,
   Toolbar,
-  Typography,
   Box,
-  useTheme,
-  ListSubheader,
+  IconButton,
   Divider,
+  ListSubheader,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
-import SpaceDashboardRoundedIcon from "@mui/icons-material/SpaceDashboardRounded";
-import GroupIcon from "@mui/icons-material/Group";
-import SettingsIcon from "@mui/icons-material/Settings";
-import AgricultureIcon from "@mui/icons-material/Agriculture";
-import PaidIcon from "@mui/icons-material/Paid";
-import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
-
+import {
+  Menu as MenuIcon,
+  SpaceDashboardRounded as DashboardIcon,
+  Savings as PricingIcon,
+  Group as CustomersIcon,
+  Logout as LogoutIcon,
+  Settings as SettingsIcon,
+} from "@mui/icons-material";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
 
 const drawerWidth = 220;
+const collapsedWidth = 60;
+
+interface NavItem {
+  text: string;
+  path: string;
+  icon: React.ReactNode;
+}
 
 const Sidebar: React.FC = () => {
- 
+  const { logout, userGroups } = useAuth(); // userGroups: string[]
   const navigate = useNavigate();
   const location = useLocation();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const [collapsed, setCollapsed] = useState(isMobile);
 
-  const agentNavItems = [
-    { text: "Dashboard", path: "/agent/dashboard", icon: <SpaceDashboardRoundedIcon /> },
-  ];
+  useEffect(() => {
+    setCollapsed(isMobile);
+  }, [isMobile]);
 
-  const customerNavItems = [
-    { text: "Dashboard", path: "/customer/dashboard", icon: <SpaceDashboardRoundedIcon /> },
-  ];
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate("/logout", { replace: true });
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
+  const navItems = useMemo(() => {
+    const base: Record<string, NavItem[]> = {
+      agent: [
+        { text: "Dashboard", path: "/agent/dashboard", icon: <DashboardIcon /> },
+        { text: "Pricing", path: "/agent/pricing", icon: <PricingIcon /> },
+        { text: "Customers", path: "/customers/list", icon: <CustomersIcon /> },
+        { text: "Profile", path: "/profile", icon: <SettingsIcon /> },
+      ],
+      customer: [
+        { text: "Dashboard", path: "/customer/dashboard", icon: <DashboardIcon /> },
+        { text: "Profile", path: "/profile", icon: <SettingsIcon /> },
+      ],
+      admin: [
+        { text: "Profile", path: "/profile", icon: <SettingsIcon /> },
+      ],
+    };
+
+    const primaryGroup = Array.isArray(userGroups) ? userGroups[0] : userGroups;
+    return base[primaryGroup] || [];
+  }, [userGroups]);
+
+  const renderNavItems = (items: NavItem[]) => {
+    const primaryGroup = Array.isArray(userGroups) ? userGroups[0] : userGroups;
+
+    return (
+      <List>
+        {!collapsed && primaryGroup && (
+          <ListSubheader
+            component="div"
+            sx={{
+              backgroundColor: "transparent",
+              color: "white",
+              marginTop: 2,
+              fontWeight: 500,
+              textTransform: "capitalize",
+            }}
+          >
+            {primaryGroup}
+          </ListSubheader>
+        )}
+
+        {items.map(({ text, path, icon }) => (
+          <ListItem key={text} disablePadding>
+            <ListItemButton
+              selected={location.pathname === path}
+              onClick={() => navigate(path)}
+              sx={{
+                gap: 1,
+                px: collapsed ? 1 : 2,
+                justifyContent: collapsed ? "center" : "flex-start",
+                "&.Mui-selected": { backgroundColor: "#3a66c6" },
+                "&:hover": { backgroundColor: "#274b9f" },
+              }}
+            >
+              <ListItemIcon sx={{ color: "white", minWidth: collapsed ? 0 : 30 }}>
+                {icon}
+              </ListItemIcon>
+              {!collapsed && <ListItemText primary={text} />}
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+    );
+  };
 
   return (
     <Drawer
       variant="permanent"
       sx={{
-        width: drawerWidth,
+        width: collapsed ? collapsedWidth : drawerWidth,
         flexShrink: 0,
-        [`& .MuiDrawer-paper`]: {
-          width: drawerWidth,
+        transition: "width 0.3s",
+        "& .MuiDrawer-paper": {
+          width: collapsed ? collapsedWidth : drawerWidth,
           boxSizing: "border-box",
-          backgroundColor: "#634832",
+          backgroundColor: "royalblue",
           color: "white",
+          overflowX: "hidden",
+          transition: "width 0.3s",
         },
       }}
     >
       <Toolbar
         sx={{
           display: "flex",
-          justifyContent: "center",
+          justifyContent: collapsed ? "center" : "space-between",
           alignItems: "center",
-          backgroundColor: "#634832",
-          color: "white",
-          height: 64,
-          marginBottom: 4,
+          minHeight: 64,
+          px: 2,
         }}
       >
-        <Typography variant="h6" noWrap>
-          MyApp
-        </Typography>
+        {isMobile && (
+          <IconButton onClick={() => setCollapsed((prev) => !prev)} sx={{ color: "white" }}>
+            <MenuIcon />
+          </IconButton>
+        )}
       </Toolbar>
+
       <Box sx={{ flexGrow: 1 }}>
-        <List
-          subheader={
-            <ListSubheader component="div" sx={{ backgroundColor: "transparent", color: "white", marginTop: 2, fontWeight: 500 }}>
-              Agent
-            </ListSubheader>
-          }
-        >
-          {agentNavItems.map((item) => (
-            <ListItem key={item.text} disablePadding>
-              <ListItemButton
-                selected={location.pathname === item.path}
-                onClick={() => navigate(item.path)}
-                sx={{
-                  gap: 1,
-                  px: 2,
-                  "&.Mui-selected": {
-                    backgroundColor: "#967259",
-                  },
-                  "&:hover": {
-                    backgroundColor: "#967259",
-                  },
-                }}
-              >
-                <ListItemIcon sx={{ color: "white", minWidth: 30 }}>
-                  {item.icon}
-                </ListItemIcon>
-                <ListItemText primary={item.text} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-        <Divider sx={{ backgroundColor: 'white', margin: '0 5%'}}/>
-        <List
-          subheader={
-            <ListSubheader component="div" sx={{ backgroundColor: "transparent", color: "white", marginTop: 2, fontWeight: 500 }}>
-              Customer
-            </ListSubheader>
-          }
-        >
-          {customerNavItems.map((item) => (
-            <ListItem key={item.text} disablePadding>
-              <ListItemButton
-                selected={location.pathname === item.path}
-                onClick={() => navigate(item.path)}
-                sx={{
-                  gap: 1,
-                  px: 2,
-                  "&.Mui-selected": {
-                    backgroundColor: "#967259",
-                  },
-                  "&:hover": {
-                    backgroundColor: "#38220f",
-                  },
-                }}
-              >
-                <ListItemIcon sx={{ color: "white", minWidth: 30 }}>
-                  {item.icon}
-                </ListItemIcon>
-                <ListItemText primary={item.text} />
-              </ListItemButton>
-            </ListItem>
-          ))}
+        {renderNavItems(navItems)}
+        <Divider sx={{ backgroundColor: "white", margin: collapsed ? "8px 0" : "0 5%" }} />
+        <List>
+          <ListItem disablePadding>
+            <ListItemButton
+              onClick={handleLogout}
+              sx={{
+                gap: 1,
+                px: collapsed ? 1 : 2,
+                justifyContent: collapsed ? "center" : "flex-start",
+                "&:hover": { backgroundColor: "#274b9f" },
+              }}
+            >
+              <ListItemIcon sx={{ color: "white", minWidth: collapsed ? 0 : 30 }}>
+                <LogoutIcon />
+              </ListItemIcon>
+              {!collapsed && <ListItemText primary="Logout" />}
+            </ListItemButton>
+          </ListItem>
         </List>
       </Box>
     </Drawer>

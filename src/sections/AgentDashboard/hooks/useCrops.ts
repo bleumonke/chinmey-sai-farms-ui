@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getCrops as fetchCrops } from '../../../lib/api'; 
+import { getCrops as fetchCrops } from '../../../api'; 
 import type { Crop } from '../../../types'; 
 
 export function useCrops() {

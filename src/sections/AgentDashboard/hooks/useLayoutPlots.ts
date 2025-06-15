@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getLayoutPlots as fetchLayoutPlots } from '../../../lib/api';
+import { getLayoutPlots as fetchLayoutPlots } from '../../../api';
 import type { Plot } from '../../../types';
 
 export function useLayoutPlots(layoutId: string | undefined) {

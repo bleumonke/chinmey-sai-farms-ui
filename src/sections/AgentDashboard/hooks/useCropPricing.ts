@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getPricingByCropId as fetchPricing } from '../../../lib/api';
+import { getPricingByCropId as fetchPricing } from '../../../api';
 import type { Pricing } from '../../../types';
 
 export function useCropPricing(cropId: string | undefined) { 

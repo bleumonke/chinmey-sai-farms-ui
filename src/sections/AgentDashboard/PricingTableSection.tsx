@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from "react-router-dom";
 import { Alert } from '@mui/material';
-import DataTable, { ColumnDef } from "../../components/DataTableV2/DataTableV2";
+import DataTable, { ColumnDef } from "../../components/DataTable";
 import type { Pricing } from '../../types';
 import { useCropPricing } from './hooks/useCropPricing';
 

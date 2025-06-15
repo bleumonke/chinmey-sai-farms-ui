@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from "react-router-dom";
 import { Alert } from '@mui/material';
-import DataTable, { ColumnDef } from "../../components/DataTableV2/DataTableV2";
+import DataTable, { ColumnDef } from "../../components/DataTable";
 import type { Customer } from '../../types';
 import { useCustomers } from './hooks/useCustomers';
 
@@ -10,7 +10,6 @@ const CustomersTableSection: React.FC = () => {
   const { customers, isLoading, isError, error } = useCustomers();
 
   const columns: ColumnDef<Customer>[] = [
-    { label: "ID", accessor: "id" },
     { 
       label: "Name",
       accessor: "first_name",

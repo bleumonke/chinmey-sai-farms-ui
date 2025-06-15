@@ -28,12 +28,14 @@ export interface Layout {
   description?: string | null;
   center_coordinates?: { lat: number; long: number } | null;
   perimeter_coordinates?: { [key: string]: { lat: number; lng: number } } | null;
+  number_of_plots?: number;
 }
 
 export interface Plot {
   id: string;
   layout_id: string;
   customer_id?: string | null;
+  crop_id?: string | null;
   number: string;
   name: string;
   area_in_acres: number;

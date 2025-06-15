@@ -1,22 +1,20 @@
 import { useQuery } from '@tanstack/react-query';
-import { getLayouts as fetchLayouts } from '../../../lib/api';  
+import { getLayouts as fetchLayouts } from '../../../api';  
 import type { Layout } from '../../../types';  
 
 export function useLayouts() {
   const { 
-    data: layouts = [], // Provide default value
+    data: layouts = [], 
     isLoading, 
     isError, 
-    error 
+    error,
   } = useQuery<Layout[], Error>({
-    queryKey: ['layouts'], // Unique key for this query
+    queryKey: ['layouts'],
     queryFn: async () => {
-        const response = await fetchLayouts();
-        return response.data; // Extract data here
+      const response = await fetchLayouts();
+      return response.data;
     }, 
-    // Optional: Add configuration
-    // staleTime: 5 * 60 * 1000, 
   });
 
   return { layouts, isLoading, isError, error };
-} 
+}
