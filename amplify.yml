@@ -4,15 +4,18 @@ frontend:
     preBuild:
       commands:
         - echo "Installing Node 20 using nvm"
-        - curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+        - curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
         - export NVM_DIR="$HOME/.nvm"
-        - '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"'
+        - [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
         - nvm install 20
         - nvm use 20
-        - yarn install --frozen-lockfile
+        - node -v
+        - yarn install
     build:
       commands:
-        - yarn build
+        - echo "Building React app with increased Node memory"
+        - export NODE_OPTIONS="--max-old-space-size=8192"
+        - yarn run build
   artifacts:
     baseDirectory: build
     files:
