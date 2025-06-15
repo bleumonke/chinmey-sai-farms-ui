@@ -27,4 +27,5 @@ COPY --from=build /app/build ./build
 
 EXPOSE 3000
 
-CMD ["serve", "-s", "build", "-l", "3000"]
+# Use PORT env variable, fallback to 3000 if not set
+CMD ["sh", "-c", "serve -s build -l ${PORT:-3000}"]
