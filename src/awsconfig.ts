@@ -7,8 +7,8 @@ const awsconfig = {
         oauth: {
           domain: 'us-east-1ba5eao1g2.auth.us-east-1.amazoncognito.com',
           scopes: ['email', 'openid', 'profile'],
-          redirectSignIn: ['http://localhost:3000/', "https://main.d2ut8kjo40hhn.amplifyapp.com/"],
-          redirectSignOut: ['http://localhost:3000/' ,"https://main.d2ut8kjo40hhn.amplifyapp.com/"],
+          redirectSignIn: ['http://localhost:3000/', "https://dev.d2g8xj2nqdnqxg.amplifyapp.com/"],
+          redirectSignOut: ['http://localhost:3000/' ,"https://dev.d2g8xj2nqdnqxg.amplifyapp.com/"],
           responseType: 'code' as 'code',
         }
       }
