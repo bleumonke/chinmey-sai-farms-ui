@@ -35,7 +35,7 @@ const GTagInformation: React.FC<GTagInformationProps> = ({
 }) => {
   const { isLoaded, loadError } = useJsApiLoader({
     id: 'google-map-script',
-    googleMapsApiKey: 'AIzaSyDLOSyNsZtFdtPGwV0wyxgAkwdvXIb1bOQ'
+    googleMapsApiKey:process.env.REACT_APP_GOOGLE_MAPS_API_KEY || ''
   });
 
   const [localPerimeter, setLocalPerimeter] = useState<Coordinates[]>(perimeterCoordinates);
