@@ -9,8 +9,6 @@ import {
   Toolbar,
   Box,
   IconButton,
-  Divider,
-  ListSubheader,
   useTheme,
   useMediaQuery,
 } from "@mui/material";
@@ -25,7 +23,7 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 
-const drawerWidth = 220;
+const drawerWidth = 250;
 const collapsedWidth = 60;
 
 interface NavItem {
@@ -35,7 +33,7 @@ interface NavItem {
 }
 
 const Sidebar: React.FC = () => {
-  const { logout, userGroups } = useAuth(); // userGroups: string[]
+  const { logout, userGroups } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const theme = useTheme();
@@ -76,49 +74,30 @@ const Sidebar: React.FC = () => {
     return base[primaryGroup] || [];
   }, [userGroups]);
 
-  const renderNavItems = (items: NavItem[]) => {
-    const primaryGroup = Array.isArray(userGroups) ? userGroups[0] : userGroups;
-
-    return (
-      <List>
-        {!collapsed && primaryGroup && (
-          <ListSubheader
-            component="div"
+  const renderNavItems = (items: NavItem[]) => (
+    <List>
+      {items.map(({ text, path, icon }) => (
+        <ListItem key={text} disablePadding>
+          <ListItemButton
+            selected={location.pathname === path}
+            onClick={() => navigate(path)}
             sx={{
-              backgroundColor: "transparent",
-              color: "white",
-              marginTop: 2,
-              fontWeight: 500,
-              textTransform: "capitalize",
+              gap: 1,
+              px: collapsed ? 1 : 2,
+              justifyContent: collapsed ? "center" : "flex-start",
+              "&.Mui-selected": { backgroundColor: "#3a66c6" },
+              "&:hover": { backgroundColor: "#274b9f" },
             }}
           >
-            {primaryGroup}
-          </ListSubheader>
-        )}
-
-        {items.map(({ text, path, icon }) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton
-              selected={location.pathname === path}
-              onClick={() => navigate(path)}
-              sx={{
-                gap: 1,
-                px: collapsed ? 1 : 2,
-                justifyContent: collapsed ? "center" : "flex-start",
-                "&.Mui-selected": { backgroundColor: "#3a66c6" },
-                "&:hover": { backgroundColor: "#274b9f" },
-              }}
-            >
-              <ListItemIcon sx={{ color: "white", minWidth: collapsed ? 0 : 30 }}>
-                {icon}
-              </ListItemIcon>
-              {!collapsed && <ListItemText primary={text} />}
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-    );
-  };
+            <ListItemIcon sx={{ color: "white", minWidth: collapsed ? 0 : 30 }}>
+              {icon}
+            </ListItemIcon>
+            {!collapsed && <ListItemText primary={text} />}
+          </ListItemButton>
+        </ListItem>
+      ))}
+    </List>
+  );
 
   return (
     <Drawer
@@ -126,13 +105,14 @@ const Sidebar: React.FC = () => {
       sx={{
         width: collapsed ? collapsedWidth : drawerWidth,
         flexShrink: 0,
-        transition: "width 0.3s",
         "& .MuiDrawer-paper": {
           width: collapsed ? collapsedWidth : drawerWidth,
           boxSizing: "border-box",
           backgroundColor: "royalblue",
           color: "white",
-          overflowX: "hidden",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
           transition: "width 0.3s",
         },
       }}
@@ -153,9 +133,18 @@ const Sidebar: React.FC = () => {
         )}
       </Toolbar>
 
-      <Box sx={{ flexGrow: 1 }}>
+      <Box
+        sx={{
+          flexGrow: 1,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+        }}
+      >
         {renderNavItems(navItems)}
-        <Divider sx={{ backgroundColor: "white", margin: collapsed ? "8px 0" : "0 5%" }} />
+      </Box>
+
+      <Box>
         <List>
           <ListItem disablePadding>
             <ListItemButton

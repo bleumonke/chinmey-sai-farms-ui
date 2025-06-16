@@ -9,13 +9,6 @@ import {
   IconButton,
   Grid,
   Fade,
-  Snackbar,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  Alert,
   Container,
   Tabs,
   Tab,
@@ -26,6 +19,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { getLayouts, updateLayout, deleteLayout } from '../../api';
 import PlotsTableSection from '../../sections/AgentDashboard/PlotsTableSection';
 import type { Layout, LayoutPayload } from '../../types';
+import GTagInformation from '../../components/GTagInformation';
+import Notification from '../../components/Notification';
+import ConfirmDialog from '../../components/ConfirmDialog';
 
 const TabPanel = ({ children, value, index }: { children?: React.ReactNode; value: number; index: number }) => {
   return value === index ? <Box sx={{ pt: 2 }}>{children}</Box> : null;
@@ -174,108 +170,16 @@ const LayoutDetailsPage: React.FC = () => {
               ))}
             </Grid>
           </TabPanel>
+          
           <TabPanel value={tabIndex} index={2}>
-            <Grid container spacing={2}>
-              <Grid size={12}>
-                <Typography variant="h6" gutterBottom>Center Coordinates</Typography>
-              </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <TextField
-                  fullWidth
-                  label="Center Latitude"
-                  value={formData.center_coordinates.lat}
-                  onChange={(e) => setFormData({
-                    ...formData,
-                    center_coordinates: {
-                      ...formData.center_coordinates,
-                      lat: parseFloat(e.target.value),
-                    },
-                  })}
-                />
-              </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <TextField
-                  fullWidth
-                  label="Center Longitude"
-                  value={formData.center_coordinates.long}
-                  onChange={(e) => setFormData({
-                    ...formData,
-                    center_coordinates: {
-                      ...formData.center_coordinates,
-                      long: parseFloat(e.target.value),
-                    },
-                  })}
-                />
-              </Grid>
-            </Grid>
-            <Grid container spacing={2} sx={{ mt: 2 }}>
-              <Grid size={12}>
-                <Typography variant="h6" gutterBottom>Parameter Coordinates</Typography>
-              </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <TextField
-                  fullWidth
-                  label="Center Latitude"
-                  value={formData.center_coordinates.lat}
-                  onChange={(e) => setFormData({
-                    ...formData,
-                    center_coordinates: {
-                      ...formData.center_coordinates,
-                      lat: parseFloat(e.target.value),
-                    },
-                  })}
-                />
-              </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <TextField
-                  fullWidth
-                  label="Center Longitude"
-                  value={formData.center_coordinates.long}
-                  onChange={(e) => setFormData({
-                    ...formData,
-                    center_coordinates: {
-                      ...formData.center_coordinates,
-                      long: parseFloat(e.target.value),
-                    },
-                  })}
-                />
-              </Grid>
-            </Grid>
-            <Stack spacing={2}>
-              {Object.entries(perimeterCoords).map(([key, coord]) => (
-                <Grid container spacing={2} key={key}>
-                  <Grid size={6}>
-                    <TextField
-                      fullWidth
-                      label={`Perimeter ${key} - Lat`}
-                      value={coord.lat}
-                      onChange={(e) => setPerimeterCoords({
-                        ...perimeterCoords,
-                        [key]: {
-                          ...coord,
-                          lat: parseFloat(e.target.value),
-                        },
-                      })}
-                    />
-                  </Grid>
-                  <Grid size={6}>
-                    <TextField
-                      fullWidth
-                      label={`Perimeter ${key} - Lng`}
-                      value={coord.lng}
-                      onChange={(e) => setPerimeterCoords({
-                        ...perimeterCoords,
-                        [key]: {
-                          ...coord,
-                          lng: parseFloat(e.target.value),
-                        },
-                      })}
-                    />
-                  </Grid>
-                </Grid>
-              ))}
-            </Stack>
+            <GTagInformation
+              centerCoordinates={{ lat: formData.center_coordinates.lat, lng: formData.center_coordinates.long }}
+              perimeterCoordinates={Object.values(perimeterCoords)}
+              zoom={15}
+              mapHeight="400px"
+            />
           </TabPanel>
+          
           <TabPanel value={tabIndex} index={1}>
             <Grid container sx={{flexDirection: 'row', display: 'flex', justifyContent: 'end'}} spacing={2}>
               <Button variant="contained" onClick={() => navigate(`/agent/layouts/${layoutId}/plots/new`)} sx={{ backgroundColor:'black', color: 'white', '&:hover': { backgroundColor: '#333' }, alignSelf: "flex-end" }}>
@@ -286,18 +190,22 @@ const LayoutDetailsPage: React.FC = () => {
           </TabPanel>
         </Stack>
       </Fade>
-      <Dialog open={showDeleteDialog} onClose={() => setShowDeleteDialog(false)}>
-        <DialogTitle>Delete Layout?</DialogTitle>
-        <DialogContent><DialogContentText>This action cannot be undone.</DialogContentText></DialogContent>
-        <DialogActions>
-          <Button onClick={() => setShowDeleteDialog(false)}>Cancel</Button>
-          <Button color="error" onClick={handleDelete}>Delete</Button>
-        </DialogActions>
-      </Dialog>
+      <ConfirmDialog
+        open={showDeleteDialog} 
+        onClose={() => setShowDeleteDialog(false)}
+        title="Delete Plot"
+        message="Are you sure you want to delete ?"
+        onConfirm={handleDelete}
+        confirmLabel="Delete"
+        confirmColor="error"
+      />
+      <Notification
+          open={snackbar.open}
+          onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
+          alertColor={snackbar.severity}
+          message={snackbar.message}
+      />
 
-      <Snackbar open={snackbar.open} autoHideDuration={4000} onClose={() => setSnackbar((s) => ({ ...s, open: false }))}>
-        <Alert severity={snackbar.severity}>{snackbar.message}</Alert>
-      </Snackbar>
     </Container>
   );
 };

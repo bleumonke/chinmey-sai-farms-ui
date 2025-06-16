@@ -38,6 +38,7 @@ interface DataTableProps<T extends { id: string | number }> {
   onDelete?: (id: string | number) => void;
   rowsPerPageOptions?: number[];
   defaultRowsPerPage?: number;
+  elevation?: number;
 }
 
 function DataTable<T extends { id: string | number }>({
@@ -51,6 +52,7 @@ function DataTable<T extends { id: string | number }>({
   onDelete,
   rowsPerPageOptions = [5, 10, 25],
   defaultRowsPerPage = 5,
+  elevation = 0,
 }: DataTableProps<T>) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(defaultRowsPerPage);
@@ -69,7 +71,7 @@ function DataTable<T extends { id: string | number }>({
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value.toLowerCase());
-    setPage(0); // reset to first page on new search
+    setPage(0);
   };
 
   const handleDelete = (id: string | number) => {
@@ -94,8 +96,13 @@ function DataTable<T extends { id: string | number }>({
   return (
     <TableContainer
       component={Paper}
-      elevation={4}
-      sx={{ minHeight: 300, paddingBottom: 2 }}
+      elevation={elevation}
+      sx={{
+        minHeight: 300,
+        padding: 2,
+        backgroundColor: "#f8f8ff",
+        borderRadius: 5,
+      }}
     >
       <Box display="flex" justifyContent="flex-end" alignItems="center" p={2} gap={2}>
         <Box display="flex" gap={2} alignItems="center">
@@ -130,13 +137,15 @@ function DataTable<T extends { id: string | number }>({
                 sx={{
                   border: "1px solid #e0e0e0",
                   fontWeight: 600,
+                  backgroundColor: "#333333",
+                  color: "#FFFFFF",
                 }}
               >
                 {col.label}
               </TableCell>
             ))}
             {(onViewDetails || onDelete) && (
-              <TableCell sx={{ border: "1px solid #e0e0e0" }} />
+              <TableCell sx={{ border: "1px solid #e0e0e0", backgroundColor: "#333333" }} />
             )}
           </TableRow>
         </TableHead>
@@ -158,12 +167,15 @@ function DataTable<T extends { id: string | number }>({
               </TableRow>
             ))
           ) : paginatedData.length > 0 ? (
-            paginatedData.map((row, rowIndex) => (
+            paginatedData.map((row) => (
               <TableRow
                 key={row.id}
                 hover
                 sx={{
-                  backgroundColor: rowIndex % 2 === 0 ? "#f9f9f9" : "#ffffff",
+                  backgroundColor: "#ffffff",
+                  "&:hover": {
+                    backgroundColor: "#e0e0e0",
+                  },
                 }}
               >
                 {columns.map((col, i) => (
@@ -179,7 +191,7 @@ function DataTable<T extends { id: string | number }>({
                         onClick={() => onViewDetails(row.id)}
                         aria-label="edit"
                         sx={{
-                          backgroundColor: "#1976d2",
+                          backgroundColor: "royalblue",
                           color: "#fff",
                           "&:hover": {
                             backgroundColor: "#115293",

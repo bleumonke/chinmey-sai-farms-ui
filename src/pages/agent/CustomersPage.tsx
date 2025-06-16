@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Alert, Typography, Button, Container } from '@mui/material';
+import { Grid, Alert, Typography, Button, Container, Fade } from '@mui/material';
 import { useNavigate } from "react-router-dom";
 import { useCustomers } from '../../sections/AgentDashboard/hooks/useCustomers';
 import DataTable, { ColumnDef } from "../../components/DataTable";
@@ -37,29 +37,31 @@ const CustomersPage: React.FC = () => {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4 }}>
-      <Typography variant="h6" fontWeight={600} gutterBottom>
-        Customer Management
-      </Typography>
-      <Typography variant="subtitle2" color="text.secondary" gutterBottom fontWeight={400}>
-        Manage all your customer records here. You can add, view, or edit customer information.
-        <span>Select an existing customer to view or edit their details, or click the button below to add a new customer.</span>
-      </Typography>
-      <Grid container spacing={2} sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2 }}>
-        <Button variant="outlined" sx={{ alignSelf: "flex-end", backgroundColor: 'black', color:'white' }} onClick={() => navigate('/agent/customers/new')}>
-          Create Customer
-        </Button>
-        <Grid size={12}>
-          <DataTable
-            title="Customer List"
-            columns={columns}
-            data={customers}
-            loading={isLoading}
-            onViewDetails={(id) => navigate(`/agent/customers/${id}/edit`)}
-          />
+    <Fade in={true} timeout={300}>
+      <Container maxWidth="lg" sx={{ mt: 4 }}>
+        <Typography variant="h6" fontWeight={600} gutterBottom>
+          Customer Management
+        </Typography>
+        <Typography variant="subtitle2" color="text.secondary" gutterBottom fontWeight={400}>
+          Manage all your customer records here. You can add, view, or edit customer information.
+          <span>Select an existing customer to view or edit their details, or click the button below to add a new customer.</span>
+        </Typography>
+        <Grid container spacing={2} sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2 }}>
+          <Button variant="outlined" sx={{ alignSelf: "flex-end", backgroundColor: '#333333', color:'white' }} onClick={() => navigate('/agent/customers/new')}>
+            Create Customer
+          </Button>
+          <Grid size={12}>
+            <DataTable
+              title="Customer List"
+              columns={columns}
+              data={customers}
+              loading={isLoading}
+              onViewDetails={(id) => navigate(`/agent/customers/${id}/edit`)}
+            />
+          </Grid>
         </Grid>
-      </Grid>
-    </Container>
+      </Container>
+    </Fade>
   );
 };
 

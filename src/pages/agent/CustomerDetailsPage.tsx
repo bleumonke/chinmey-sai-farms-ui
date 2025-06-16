@@ -7,13 +7,6 @@ import {
   Typography,
   IconButton,
   Fade,
-  Snackbar,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  Alert,
   Grid,
   Tabs,
   Tab,
@@ -23,6 +16,8 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getCustomers, createCustomer, updateCustomer, deleteCustomer } from '../../api';
+import ConfirmDialog from '../../components/ConfirmDialog';
+import Notification from '../../components/Notification';
 
 const CustomerDetailsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -116,22 +111,7 @@ const CustomerDetailsPage: React.FC = () => {
               <Typography variant="h5" fontWeight={600}>{isEdit ? "Edit Customer" : "Create Customer"}</Typography>
               <Stack direction='row' spacing={2}>
                 {isEdit && (
-                  <IconButton
-                        size="small"
-                        onClick={() => setShowDeleteDialog(true)}
-                        aria-label="delete"
-                        sx={{
-                          backgroundColor: "#d32f2f",
-                          color: "#fff",
-                          "&:hover": {
-                            backgroundColor: "#9a0007",
-                          },
-                          borderRadius: "50%",
-                          padding: 1,
-                        }}
-                      >
-                        <DeleteIcon fontSize="small" />
-                      </IconButton>
+                  <Button variant="contained" color="error" startIcon={<DeleteIcon />} onClick={() => setShowDeleteDialog(true)}>Delete</Button>
                 )}
                 <Button variant="outlined" color='success' onClick={handleSubmit} disabled={isSubmitting}>Save</Button>
               </Stack>
@@ -186,29 +166,21 @@ const CustomerDetailsPage: React.FC = () => {
                 <Tab label="Coupons" />
               </Tabs>
             </Grid>
-          <Dialog open={showDeleteDialog} onClose={() => setShowDeleteDialog(false)}>
-            <DialogTitle>Delete Customer</DialogTitle>
-            <DialogContent>
-              <DialogContentText>
-                Are you sure you want to delete this customer? 
-                This action cannot be undone.
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={() => setShowDeleteDialog(false)}>Cancel</Button>
-              <Button onClick={handleDelete} color="error">Delete</Button>
-            </DialogActions>
-          </Dialog>
-          <Snackbar
+          <ConfirmDialog
+            open={showDeleteDialog}
+            onClose={() => setShowDeleteDialog(false)}
+            title="Delete Customer"
+            message="Are you sure you want to delete this customer? This action cannot be undone."
+            onConfirm={handleDelete}
+            confirmLabel="Delete"
+            confirmColor="error"
+          />
+          <Notification
             open={snackbar.open}
-            autoHideDuration={3000}
+            message={snackbar.message}
+            severity={snackbar.severity}
             onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-          >
-            <Alert severity={snackbar.severity} sx={{ width: '100%' }}>
-              {snackbar.message}
-            </Alert>
-          </Snackbar>
+          />
         </Box>
       </Fade>
     </Container>

@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import {
   Box, Button, TextField, Stack, Typography, IconButton, Grid, Fade, Tabs,
-  Tab, Select, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions,
-  Snackbar, FormControl, InputLabel, MenuItem, Alert, Container
+  Tab, Select, FormControl, InputLabel, MenuItem, Container
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getPlotById, createPlot, updatePlot, deletePlot } from '../../api';
 import type { Plot, PlotPayload } from '../../types';
+import GTagInformation from '../../components/GTagInformation';
+import Notification from '../../components/Notification';
+import ConfirmDialog from '../../components/ConfirmDialog';
 
 const PlotDetailsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -274,44 +276,12 @@ const PlotDetailsPage: React.FC = () => {
               )}
 
               {activeTab === 1 && (
-              <Stack gap={2}>
-                <Grid container spacing={2}>
-                  <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-                    <TextField
-                      label="Center Latitude"
-                      value={formData.center_lat}
-                      onChange={(e) => handleChange('center_lat', e.target.value)}
-                      fullWidth
-                    />
-                  </Grid>
-                  <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-                    <TextField
-                      label="Center Longitude"
-                      value={formData.center_lng}
-                      onChange={(e) => handleChange('center_lng', e.target.value)}
-                      fullWidth
-                    />
-                  </Grid>
-                </Grid>
-                <Grid container spacing={2}>
-                  <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-                    <TextField
-                      label="Center Latitude"
-                      value={formData.center_lat}
-                      onChange={(e) => handleChange('center_lat', e.target.value)}
-                      fullWidth
-                    />
-                  </Grid>
-                  <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-                    <TextField
-                      label="Center Longitude"
-                      value={formData.center_lng}
-                      onChange={(e) => handleChange('center_lng', e.target.value)}
-                      fullWidth
-                    />
-                  </Grid>
-                </Grid>
-              </Stack>
+                <GTagInformation
+                  centerCoordinates={{ lat: parseFloat(formData.center_lat || '0'), lng: parseFloat(formData.center_lng || '0') }}
+                  perimeterCoordinates={Object.values(perimeterCoords)}
+                  zoom={15}
+                  mapHeight="400px"
+                />
               )}
               {activeTab === 2 && (
                 <Box sx={{ p: 2, textAlign: 'center' }}>
@@ -320,28 +290,21 @@ const PlotDetailsPage: React.FC = () => {
               )}
             </Box>
           </Box>
-
-          <Dialog open={showDeleteDialog} onClose={() => setShowDeleteDialog(false)}>
-            <DialogTitle>Delete Plot</DialogTitle>
-            <DialogContent>
-              <DialogContentText>Are you sure you want to delete this plot? This action cannot be undone.</DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={() => setShowDeleteDialog(false)}>Cancel</Button>
-              <Button onClick={handleDelete} color="error">Delete</Button>
-            </DialogActions>
-          </Dialog>
-
-          <Snackbar
+          <ConfirmDialog
+            open={showDeleteDialog} 
+            onClose={() => setShowDeleteDialog(false)}
+            title="Delete Plot"
+            message="Are you sure you want to delete ?"
+            onConfirm={handleDelete}
+            confirmLabel="Delete"
+            confirmColor="error"
+          />
+          <Notification
             open={snackbar.open}
-            autoHideDuration={3000}
-            onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-          >
-            <Alert severity={snackbar.severity} sx={{ width: '100%' }}>
-              {snackbar.message}
-            </Alert>
-          </Snackbar>
+            onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
+            alertColor={snackbar.severity}
+            message={snackbar.message}
+          />
         </Stack>
       </Fade>
     </Container>

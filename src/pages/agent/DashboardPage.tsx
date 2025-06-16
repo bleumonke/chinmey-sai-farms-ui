@@ -23,14 +23,12 @@ import PersonIcon from "@mui/icons-material/Person";
 import LayoutsTableSection from "../../sections/AgentDashboard/LayoutsTableSection";
 import { createLayout } from "../../api";
 import { useQueryClient } from '@tanstack/react-query';
+import ActionButton from "../../components/ActionButton";
 
 const cards = [
   { title: "Total Layouts", value: 12, icon: <LandscapeIcon />, color: "green" },
   { title: "Active Crops", value: 8, icon: <LocalFloristIcon />, color: "gold" },
   { title: "Customers", value: 150, icon: <PersonIcon />, color: "royalblue" },
-  { title: "Pending Requests", value: 5, icon: <LandscapeIcon />, color: "orange" },
-  { title: "Completed Tasks", value: 20, icon: <LocalFloristIcon />, color: "purple" },
-  { title: "New Messages", value: 3, icon: <PersonIcon />, color: "red" },
 ];
 
 const DashboardPage: React.FC = () => {
@@ -115,10 +113,10 @@ const DashboardPage: React.FC = () => {
     <Container maxWidth="lg" sx={{ mt: 4 }}>
       <Stack spacing={4}>
         <Box>
-          <Typography variant="h4" fontWeight={600} gutterBottom>
+          <Typography variant="h6" fontWeight={500} gutterBottom>
             Welcome, Jane Doe
           </Typography>
-          <Typography variant="body1" color="text.secondary">
+          <Typography variant="body2" color="text.secondary">
             Monitor and manage your layouts and crops here.
           </Typography>
         </Box>
@@ -145,8 +143,8 @@ const DashboardPage: React.FC = () => {
                     flexDirection="column"
                     justifyContent="center"
                   >
-                    <Typography variant="h6">{card.title}</Typography>
-                    <Typography variant="body1">{card.value}</Typography>
+                    <Typography variant="subtitle1">{card.title}</Typography>
+                    <Typography variant="subtitle2">{card.value}</Typography>
                   </Box>
                 </Stack>
               </Paper>
@@ -156,16 +154,18 @@ const DashboardPage: React.FC = () => {
 
         <Divider sx={{ my: 4 }} />
 
-        <Box>
-          <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-            <Typography variant="h6">Your Layouts</Typography>
-            <Button
-              variant="contained"
-              onClick={() => setOpenDialog(true)}
-              sx={{ backgroundColor: "black", color: "white", "&:hover": { backgroundColor: "#333" } }}
-            >
-              Create Layout
-            </Button>
+        <Box display="flex" justifyContent="space-between" alignItems="center" flexDirection='column'>
+          <Box display="flex" flexDirection="row" alignItems="center" justifyContent="space-between" width="100%" my={2}>
+            <Box display="flex" alignItems="center">
+              <Typography variant="h5" fontWeight={600} sx={{fontWeight:400}}>Layouts</Typography>
+            </Box>
+            <ActionButton
+                  label='Create Layout'
+                  onClick={() => setOpenDialog(true)}
+                  color='#333333'
+                  variant='contained'
+                  size="medium"
+                />
           </Box>
           <LayoutsTableSection />
         </Box>
