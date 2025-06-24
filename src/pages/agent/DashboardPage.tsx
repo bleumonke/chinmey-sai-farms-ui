@@ -13,17 +13,14 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  TextField,
-  Snackbar,
-  Alert,
+  TextField
 } from "@mui/material";
 import LandscapeIcon from "@mui/icons-material/Landscape";
 import LocalFloristIcon from "@mui/icons-material/LocalFlorist";
 import PersonIcon from "@mui/icons-material/Person";
 import LayoutsTableSection from "../../sections/AgentDashboard/LayoutsTableSection";
-import { createLayout } from "../../api";
-import { useQueryClient } from '@tanstack/react-query';
-import ActionButton from "../../components/ActionButton";
+import Notification from '../../components/Notification';
+import { useCreateLayout } from "../../sections/AgentDashboard/hooks/useLayouts";
 
 const cards = [
   { title: "Total Layouts", value: 12, icon: <LandscapeIcon />, color: "green" },
@@ -32,8 +29,6 @@ const cards = [
 ];
 
 const DashboardPage: React.FC = () => {
-  const queryClient = useQueryClient();
-
   const [openDialog, setOpenDialog] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -49,6 +44,9 @@ const DashboardPage: React.FC = () => {
     message: "",
     severity: "success" as "success" | "error",
   });
+
+  // Use mutation hook
+  const createLayoutMutation = useCreateLayout();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -68,7 +66,7 @@ const DashboardPage: React.FC = () => {
     });
   };
 
-  const handleSave = async () => {
+  const handleSave = () => {
     if (!formData.name || !formData.area) {
       setSnackbar({
         open: true,
@@ -78,8 +76,8 @@ const DashboardPage: React.FC = () => {
       return;
     }
 
-    try {
-      await createLayout({
+    createLayoutMutation.mutate(
+      {
         name: formData.name,
         address: formData.address,
         city: formData.city,
@@ -87,27 +85,31 @@ const DashboardPage: React.FC = () => {
         country: formData.country,
         zip_code: formData.zip_code,
         area_in_acres: parseFloat(formData.area),
-        center_coordinates: { lat: 0, lng: 0 },
-        perimeter_coordinates: { lat: 0, lng: 0 }
-      });
+        center_coordinates: { lat: 0, long: 0},
+        perimeter_coordinates: {}
+      },
+      {
+        onSuccess: () => {
+          setSnackbar({
+            open: true,
+            message: "Layout created successfully.",
+            severity: "success",
+          });
+          handleCloseDialog();
+        },
+        onError: (error) => {
+          console.error(error);
+          setSnackbar({
+            open: true,
+            message: "Failed to create layout.",
+            severity: "error",
+          });
+        }
+      }
+    );
+  };
 
-      setSnackbar({
-        open: true,
-        message: "Layout created successfully.",
-        severity: "success",
-      });
-
-      handleCloseDialog();
-      await queryClient.invalidateQueries({ queryKey: ['layouts'] });
-    } catch (error) {
-      console.error(error);
-      setSnackbar({
-        open: true,
-        message: "Failed to create layout.",
-        severity: "error",
-      });
-    }
-  };      
+const isSaving = createLayoutMutation.status === "pending";
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4 }}>
@@ -123,7 +125,7 @@ const DashboardPage: React.FC = () => {
 
         <Grid container spacing={2} justifyContent="center">
           {cards.map((card, index) => (
-            <Grid key={index} size={{ xs: 12, sm: 6, md: 4 }}>
+            <Grid key={index} size={{ xs:12, sm:6, md:4}}>
               <Paper
                 elevation={3}
                 sx={{
@@ -153,22 +155,7 @@ const DashboardPage: React.FC = () => {
         </Grid>
 
         <Divider sx={{ my: 4 }} />
-
-        <Box display="flex" justifyContent="space-between" alignItems="center" flexDirection='column'>
-          <Box display="flex" flexDirection="row" alignItems="center" justifyContent="space-between" width="100%" my={2}>
-            <Box display="flex" alignItems="center">
-              <Typography variant="h5" fontWeight={600} sx={{fontWeight:400}}>Layouts</Typography>
-            </Box>
-            <ActionButton
-                  label='Create Layout'
-                  onClick={() => setOpenDialog(true)}
-                  color='#333333'
-                  variant='contained'
-                  size="medium"
-                />
-          </Box>
-          <LayoutsTableSection />
-        </Box>
+        <LayoutsTableSection onAddNew={() => setOpenDialog(true)} />
 
         <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
           <DialogTitle>
@@ -192,8 +179,8 @@ const DashboardPage: React.FC = () => {
               <TextField
                 name="area"
                 fullWidth
-                label="Area (sq ft)"
-                placeholder="Enter area in square feet"
+                label="Area (in Acres)"
+                placeholder="Enter area in acres"
                 variant="outlined"
                 size="medium"
                 type="number"
@@ -201,7 +188,7 @@ const DashboardPage: React.FC = () => {
                 onChange={handleInputChange}
               />
               <Grid container spacing={2}>
-                <Grid size={{ xs: 12, sm: 6 }}>
+                <Grid size={{ xs:12, sm:6}}>
                   <TextField
                     name="address"
                     fullWidth
@@ -213,7 +200,7 @@ const DashboardPage: React.FC = () => {
                     onChange={handleInputChange}
                   />
                 </Grid>
-                <Grid size={{ xs: 12, sm: 6 }}>
+                <Grid size={{ xs:12, sm:6}}>
                   <TextField
                     name="city"
                     fullWidth
@@ -228,7 +215,7 @@ const DashboardPage: React.FC = () => {
               </Grid>
 
               <Grid container spacing={2}>
-                <Grid size={{ xs: 12, sm: 4 }}>
+                <Grid size={{ xs:12, sm:4}}>
                   <TextField
                     name="state"
                     fullWidth
@@ -240,7 +227,7 @@ const DashboardPage: React.FC = () => {
                     onChange={handleInputChange}
                   />
                 </Grid>
-                <Grid size={{ xs: 12, sm: 4 }}>
+                <Grid size={{ xs:12, sm:4}}>
                   <TextField
                     name="country"
                     fullWidth
@@ -252,7 +239,7 @@ const DashboardPage: React.FC = () => {
                     onChange={handleInputChange}
                   />
                 </Grid>
-                <Grid size={{ xs: 12, sm: 4 }}>
+                <Grid size={{ xs:12, sm:4}}>
                   <TextField
                     name="zip_code"
                     fullWidth
@@ -269,24 +256,18 @@ const DashboardPage: React.FC = () => {
           </DialogContent>
           <DialogActions>
             <Button onClick={handleCloseDialog}>Cancel</Button>
-            <Button onClick={handleSave} variant="contained">
-              Save
+            <Button onClick={handleSave} variant="contained" disabled={isSaving}>
+              {isSaving ? "Saving..." : "Save"}
             </Button>
           </DialogActions>
         </Dialog>
 
-        <Snackbar
+        <Notification
           open={snackbar.open}
-          autoHideDuration={4000}
-          onClose={() => setSnackbar({ ...snackbar, open: false })}
-        >
-          <Alert
-            severity={snackbar.severity}
-            onClose={() => setSnackbar({ ...snackbar, open: false })}
-          >
-            {snackbar.message}
-          </Alert>
-        </Snackbar>
+          onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
+          alertColor={snackbar.severity}
+          message={snackbar.message}
+        />
       </Stack>
     </Container>
   );

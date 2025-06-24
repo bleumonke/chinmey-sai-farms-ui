@@ -47,7 +47,7 @@ const Sidebar: React.FC = () => {
   const handleLogout = async () => {
     try {
       await logout();
-      navigate("/logout", { replace: true });
+      navigate("/home", { replace: true });
     } catch (error) {
       console.error("Logout failed:", error);
     }

@@ -1,4 +1,5 @@
 export interface Customer {
+  icon:string;
   id: string;
   first_name: string;
   middle_name?: string | null;
@@ -42,31 +43,29 @@ export interface Plot {
   perimeter_coordinates?: { [key: string]: { lat: number; lng: number } } | null;
 }
 
+export interface Pricing {
+  id: string;
+  crop_id:string;
+  name: string;
+  payment_mode: string;
+  status: string;
+  extent_unit: string;
+  extent_min_value: number;
+  extent_max_value: number;
+  cost_per_acre: number;
+  cost_per_cent: number;
+  cost_per_sqft:number;
+  total_cost_per_acre: number;
+  valid_from: string;
+  valid_to: string;
+  description?: string;
+}
+
 export interface Crop {
   id: string;
   name: string;
 }
 
-export interface Pricing {
-  id: string;
-  crop_id?: string; 
-  name: string;
-  payment_mode: string;
-  extent_unit: string;
-  extent_min_value?: number | string;
-  extent_max_value?: number | string;
-  cost_per_acre?: number | string;
-  cost_per_cent?: number | string;
-  cost_per_sqft?: number | string;
-  total_cost_per_acre?: number | string;
-  emi_per_month?: number | string;
-  valid_from?: string; // Consider Date type if transformations are done
-  valid_to?: string;   // Consider Date type
-  description?: string | null;
-  status?: string; // Consider enum type ('ACTIVE', 'INACTIVE')
-}
-
-// Payload types for API requests
 
 export interface LayoutPayload {
   name: string;
@@ -94,4 +93,10 @@ export interface PlotPayload {
   perimeter_coordinates?: { [key: string]: { lat: number; lng: number } } | null;
 }
 
-// Add other shared types as needed 
+export type Transaction = {
+  id: string;
+  plotId: string;
+  amount: number;
+  date: string;
+  // add other fields
+};

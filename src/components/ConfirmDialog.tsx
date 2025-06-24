@@ -34,6 +34,7 @@ interface ConfirmDialogProps {
   confirmColor?: ButtonProps['color'];
   confirmVariant?: ButtonProps['variant'];
   children?: React.ReactNode;
+  loading?: boolean;
 }
 
 const ConfirmDialog: React.FC<ConfirmDialogProps> = ({

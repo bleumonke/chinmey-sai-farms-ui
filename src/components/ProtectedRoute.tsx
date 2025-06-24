@@ -15,7 +15,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ allowedGroups, children
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/logout" replace />;
+    return <Navigate to="/home" replace />;
   }
 
   const hasAccess = allowedGroups.some(group => userGroups.includes(group));

@@ -1,37 +1,37 @@
 import React from 'react';
 import { useNavigate } from "react-router-dom";
-import { Alert } from '@mui/material';
-import DataTable, { ColumnDef } from "../../components/DataTable";
+import TableSection from "../../components/TableSection";
+import { ColumnDef } from "../../components/DataTable";
 import type { Plot } from '../../types';
-import { useLayoutPlots } from './hooks/useLayoutPlots';
+import { useLayoutPlots } from './hooks/useLayouts';
 
 interface PlotTableProps {
   layoutId: string;
 }
 
-const PlotsTableSection: React.FC<PlotTableProps> = ({layoutId}) => {
+const columns: ColumnDef<Plot>[] = [
+  { label: "LP Number", accessor: "number" },
+  { label: "Name", accessor: "name" },
+  { label: "Area (acres)", accessor: "area_in_acres" },
+  { label: "Crop ID", accessor: "crop_id" },
+  { label: "Customer ID", accessor: "customer_id" }
+];
+
+const PlotsTableSection: React.FC<PlotTableProps> = ({ layoutId }) => {
   const navigate = useNavigate();
-  const { plots, isLoading, isError, error } = useLayoutPlots(layoutId);
-
-  const columns: ColumnDef<Plot>[] = [
-    { label: "LP Number", accessor: "number" },
-    { label: "Name", accessor: "name" },
-    { label: "Area (acres)", accessor: "area_in_acres" },
-    { label: "Crop ID", accessor: "crop_id" },
-    { label: "Customer ID", accessor: "customer_id" }
-  ];
-
-  if (isError) {
-    return <Alert severity="error">Error fetching plots: {error?.message || 'Unknown error'}</Alert>;
-      }
+  const { data: plots, isLoading, isError, error } = useLayoutPlots(layoutId);
 
   return (
-    <DataTable
-      title="Plots"
+    <TableSection
       columns={columns}
-      data={plots}
-      loading={isLoading}
+      data={plots ?? []}
+      isLoading={isLoading}
+      isError={isError}
+      error={error}
+      onAddNew={() => navigate(`/agent/layouts/${layoutId}/plots/new`)}
       onViewDetails={(id) => navigate(`/agent/layouts/${layoutId}/plots/${id}/edit`)}
+      searchPlaceholder="Search plots..."
+      searchFields={["number", "name", "crop_id", "customer_id"]}
     />
   );
 };

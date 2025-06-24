@@ -12,7 +12,7 @@ const LoginRedirect: React.FC = () => {
     if (loading) return;
 
     // Prevent redirect loop when already on logout page
-    if (location.pathname === '/logout') return;
+    if (location.pathname === '/home') return;
 
     if (isAuthenticated) {
       if (userGroups.includes('admin')) {
@@ -25,7 +25,7 @@ const LoginRedirect: React.FC = () => {
         navigate('/access-denied', { replace: true });
       }
     } else {
-      navigate('/logout', { replace: true });
+      navigate('/home', { replace: true });
     }
   }, [loading, isAuthenticated, userGroups, location.pathname, navigate]);
 

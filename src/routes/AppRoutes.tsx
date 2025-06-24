@@ -14,7 +14,7 @@ import PricingPage from '../pages/agent/PricingPage';
 
 import Login from '../auth/Login';
 import LoginRedirect from '../auth/LoginRedirect';
-import LogoutPage from '../auth/LogoutPage';
+import HomePage from '../pages/HomePage';
 import AccessDeniedPage from '../auth/AccessDeniedPage';
 
 import ProtectedRoute from '../components/ProtectedRoute';
@@ -26,14 +26,15 @@ interface RouteConfig {
 }
 
 const authRoutes: RouteConfig[] = [
+  { path: '/home', element: <HomePage /> },
   { path: '/login', element: <Login /> },
   { path: '/login/redirect', element: <LoginRedirect /> },
-  { path: '/logout', element: <LogoutPage /> },
   { path: '/access-denied', element: <AccessDeniedPage /> },
 ];
 
 const agentRoutes: RouteConfig[] = [
   { path: '/agent/dashboard', element: <AgentDashboard />, allowedGroups: ['agent'] },
+  { path: '/agent/pricing', element: <PricingPage />, allowedGroups: ['agent'] },
   { path: '/agent/pricing', element: <PricingPage />, allowedGroups: ['agent'] },
   { path: '/agent/layouts/:layoutId/edit', element: <LayoutDetailsPage />, allowedGroups: ['agent'] },
   { path: '/agent/customers/new', element: <CustomerDetailsPage />, allowedGroups: ['agent'] },

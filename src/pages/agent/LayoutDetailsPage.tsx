@@ -1,4 +1,3 @@
-// src/pages/LayoutFormPage.tsx
 import React, { useState, useEffect } from 'react';
 import {
   Box,
@@ -179,15 +178,10 @@ const LayoutDetailsPage: React.FC = () => {
               mapHeight="400px"
             />
           </TabPanel>
-          
           <TabPanel value={tabIndex} index={1}>
-            <Grid container sx={{flexDirection: 'row', display: 'flex', justifyContent: 'end'}} spacing={2}>
-              <Button variant="contained" onClick={() => navigate(`/agent/layouts/${layoutId}/plots/new`)} sx={{ backgroundColor:'black', color: 'white', '&:hover': { backgroundColor: '#333' }, alignSelf: "flex-end" }}>
-                Create Plot
-              </Button>
-              <PlotsTableSection layoutId={layoutId!} />
-            </Grid>
+            <PlotsTableSection layoutId={layoutId!} />
           </TabPanel>
+          
         </Stack>
       </Fade>
       <ConfirmDialog

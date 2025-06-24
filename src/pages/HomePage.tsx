@@ -1,8 +1,7 @@
-// LogoutPage.tsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const LogoutPage: React.FC = () => {
+const HomePage: React.FC = () => {
   const navigate = useNavigate();
 
   return (
@@ -26,4 +25,4 @@ const LogoutPage: React.FC = () => {
   );
 };
 
-export default LogoutPage;
+export default HomePage;

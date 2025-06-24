@@ -14,7 +14,7 @@ const AccessDeniedPage: React.FC = () => {
     setLoggingOut(true);
     try {
       await logout();
-      navigate('/logout', { replace: true });
+      navigate('/home', { replace: true });
     } catch (error) {
       console.error('Logout failed:', error);
       setLoggingOut(false);
@@ -26,7 +26,7 @@ const AccessDeniedPage: React.FC = () => {
       if (isAuthenticated) {
         handleLogout();
       } else {
-        navigate('/logout', { replace: true });
+        navigate('/home', { replace: true });
       }
     }, 5000);
 

@@ -1,37 +1,44 @@
-import React from 'react';
-import { useNavigate } from "react-router-dom";
-import { Alert } from '@mui/material';
-import DataTable, { ColumnDef } from "../../components/DataTable";
-import type { Pricing } from '../../types';
-import { useCropPricing } from './hooks/useCropPricing';
+import React from "react";
+import { Pricing } from "../../types";
+import TableSection from "../../components/TableSection";
+import { ColumnDef } from "../../components/DataTable";
 
-interface PricingTableProps {
-  cropId: string
+interface PricingTableSectionProps {
+  pricing: Pricing[];
+  isLoading: boolean;
+  isError?: boolean;
+  error?: Error | null;
+  onAddNewPricing: () => void;
+  onViewDetails: (id: string | number) => void;
 }
 
-const PricingTableSection: React.FC<PricingTableProps> = ({cropId}) => {
-  const navigate = useNavigate();
-  const { pricing, isLoading, isError, error } = useCropPricing(cropId);
+const columns: ColumnDef<Pricing>[] = [
+  { label: "Payment Name", accessor: "name" },
+  { label: "Payment Mode", accessor: "payment_mode" },
+  { label: "Extent Unit Type", accessor: "extent_unit" },
+  { label: "Price Per Acre", accessor: "cost_per_acre" },
+  { label: "Status", accessor: "status" },
+];
 
-  const columns: ColumnDef<Pricing>[] = [
-    { label: "ID", accessor: "id" },
-    { label: "Name", accessor: "name" },
-    { label: "Payment Mode", accessor: "payment_mode" },
-    { label: "status", accessor: "status"}
-  ];
-
-  if (isError) {
-    return <Alert severity="error">Error fetching pricing: {error?.message || 'Unknown error'}</Alert>;
-      }
-
+const PricingTableSection: React.FC<PricingTableSectionProps> = ({
+  pricing,
+  isLoading,
+  isError,
+  error,
+  onAddNewPricing,
+  onViewDetails,
+}) => {
   return (
-    <DataTable
-      title="Pricing"
+    <TableSection<Pricing>
       columns={columns}
       data={pricing}
-      loading={isLoading}
-      onAddClick={() => navigate(`/agent/crops/${cropId}/pricing/new`)}
-      onViewDetails={(id) => navigate(`/agent/crops/${cropId}/pricing/${id}/edit`)}
+      isLoading={isLoading}
+      isError={isError}
+      error={error}
+      onAddNew={onAddNewPricing}
+      onViewDetails={onViewDetails}
+      searchPlaceholder="Search pricing..."
+      searchFields={["name", "payment_mode", "extent_unit", "status"]}
     />
   );
 };
