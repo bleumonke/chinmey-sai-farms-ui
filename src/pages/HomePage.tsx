@@ -1,6 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import NavBar from '../components/navbar/navbar';
+
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
 
@@ -21,6 +23,9 @@ const HomePage: React.FC = () => {
       >
         Go to Login
       </button>
+      <div>
+        <NavBar />
+      </div>
     </div>
   );
 };

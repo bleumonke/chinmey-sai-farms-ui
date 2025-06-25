@@ -29,13 +29,16 @@ function TableSection<T extends { id: string | number }>({
 }: TableSectionProps<T>) {
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredData = data?.filter((item) =>
-    searchFields
-      .map((field) => String(item[field] ?? ""))
-      .join(" ")
-      .toLowerCase()
-      .includes(searchQuery)
-  );
+  const filteredData = Array.isArray(data)
+    ? data.filter((item) =>
+        searchFields
+          .map((field) => String(item[field] ?? ""))
+          .join(" ")
+          .toLowerCase()
+          .includes(searchQuery)
+      )
+    : [];
+
 
   return (
     <Grid container spacing={2} sx={{ mt: 2 }}>
