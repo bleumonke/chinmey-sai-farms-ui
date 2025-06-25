@@ -2,7 +2,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://api.siclindia.com",
+  baseURL: process.env.REACT_APP_SERVICES_BASE_URL || '',
   headers: {
     "Content-Type": "application/json",
   },
