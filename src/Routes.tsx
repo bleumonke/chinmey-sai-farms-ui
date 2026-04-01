@@ -55,7 +55,7 @@ const sharedRoutes: RouteConfig[] = [
 export function Routes() {
   return (
     <ReactRoutes>
-      {authRoutes.map(({ path, element }) => (
+      {/* {authRoutes.map(({ path, element }) => (
         <Route key={path} path={path} element={element} />
       ))}
       <Route path="/" element={<Navigate to="/login/redirect" />} />
@@ -77,7 +77,8 @@ export function Routes() {
         ))}
       </Route>
 
-      <Route path="*" element={<Navigate to="/login" replace />} />
+      <Route path="*" element={<Navigate to="/login" replace />} /> */}
+      <Route path="" element={<AgentDashboard></AgentDashboard>} />
     </ReactRoutes>
   );
 }
